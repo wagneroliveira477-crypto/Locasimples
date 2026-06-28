@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#050810"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="LocaFácil"/>
+<link rel="icon" type="image/png" sizes="512x512" href="loca-icon-512.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="loca-icon-192.png"/>
+<link rel="apple-touch-icon" href="loca-icon-192.png"/>
+<title>LocaFácil</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#050810;color:#dde2ff;font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding-bottom:80px}
+button{cursor:pointer;font-family:inherit;border:none;transition:all .16s}
+button:active{opacity:.75;transform:scale(.97)}
+input,select,textarea{font-family:inherit;outline:none;transition:border-color .2s}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:#1c2540;border-radius:3px}
+
+/* ── HEADER ── */
+#hdr{background:#08102088;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #151f3a;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30}
+.hlogo{width:36px;height:36px;background:linear-gradient(135deg,#0b5230,#16a34a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 2px 12px #16a34a30}
+.htitle{margin-left:9px;flex:1}
+.hname{font-weight:800;font-size:15px;letter-spacing:-.3px;color:#eef0ff}
+.hsub{font-size:10px;color:#50628a;margin-top:1px}
+.hclock{text-align:right}
+.htime{font-size:14px;font-weight:800;color:#16a34a}
+.hdate{font-size:10px;color:#50628a;margin-top:1px}
+
+/* ── SEARCH BAR ── */
+#searchbar{padding:10px 14px;background:#08102088;backdrop-filter:blur(10px);border-bottom:1px solid #151f3a;display:none}
+#searchbar.show{display:block}
+.sinput{width:100%;background:#0c1428;border:1.5px solid #1c2540;border-radius:11px;padding:10px 14px 10px 38px;color:#dde2ff;font-size:14px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2350628a' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.868-3.834zm-5.242 1.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center}
+.sinput:focus{border-color:#16a34a}
+
+/* ── NAV ── */
+#nav{position:fixed;bottom:0;left:0;right:0;background:#08102099;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #151f3a;display:flex;justify-content:space-around;padding:6px 0 12px;z-index:30}
+.nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 8px;color:#334060;font-size:9px;font-weight:700;letter-spacing:.3px;min-width:50px;position:relative}
+.ni{font-size:20px;transition:transform .2s}
+.nb.active{color:#16a34a}
+.nb.active .ni{transform:scale(1.1)}
+.nbadge{position:absolute;top:0;right:8px;background:#f87171;color:#fff;font-size:9px;font-weight:800;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center}
+
+/* ── APP ── */
+#app{padding:13px 13px 0;max-width:520px;margin:0 auto}
+
+/* ── STAT GRID ── */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sc{background:#0c1428;border:1px solid #151f3a;border-radius:14px;padding:12px}
+.scic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:8px}
+.sclb{font-size:10px;color:#6070a0;font-weight:600;margin-bottom:3px}
+.scvl{font-size:18px;font-weight:900;letter-spacing:-.5px}
+
+/* ── CARDS ── */
+.card{background:#0c1428;border:1px solid #151f3a;border-radius:15px;padding:13px}
+
+/* ── LIST ITEM ── */
+.li{background:#0c1428;border:1.5px solid #151f3a;border-radius:14px;padding:12px;margin-bottom:7px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.li:active{border-color:#16a34a;box-shadow:0 0 0 1px #16a34a20}
+.li.red{border-color:#f8717155}
+.li.yellow{border-color:#fbbf2455}
+.li.purple{border-color:#a78bfa55}
+.li-row{display:flex;align-items:center;gap:10px}
+.li-ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.li-info{flex:1;min-width:0}
+.li-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#eef0ff}
+.li-sub{font-size:11px;color:#6070a0;margin-top:2px}
+.li-right{text-align:right;flex-shrink:0}
+.li-val{font-weight:800;font-size:13px}
+.li-meta{font-size:10px;color:#6070a0;margin-top:2px}
+
+/* ── PROGRESS ── */
+.pb{background:#151f3a;border-radius:4px;height:4px;overflow:hidden;margin-top:8px}
+.pf{height:100%;border-radius:4px;transition:width .5s}
+.pl{display:flex;justify-content:space-between;font-size:9px;color:#6070a0;margin-top:3px}
+
+/* ── BADGE ── */
+.bdg{border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;display:inline-block}
+.bg{background:#16a34a1a;color:#16a34a;border:1px solid #16a34a35}
+.br{background:#f871711a;color:#f87171;border:1px solid #f8717135}
+.by{background:#fbbf241a;color:#fbbf24;border:1px solid #fbbf2435}
+.bb{background:#4f8ef71a;color:#4f8ef7;border:1px solid #4f8ef735}
+.bgr{background:#3a45601a;color:#8090b8;border:1px solid #3a456035}
+.bpu{background:#a78bfa1a;color:#a78bfa;border:1px solid #a78bfa35}
+
+/* ── SEC ── */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.sh h2{font-size:17px;font-weight:800;letter-spacing:-.3px;color:#eef0ff}
+.st{font-size:10px;font-weight:700;color:#6070a0;letter-spacing:.7px;margin:13px 0 7px}
+
+/* ── MODAL ── */
+#ov{display:none;position:fixed;inset:0;background:#00000099;z-index:50;align-items:flex-end;justify-content:center}
+#ov.open{display:flex}
+#mb{background:#080e1e;border:1px solid #151f3a;border-radius:22px 22px 0 0;width:100%;max-width:520px;max-height:94vh;overflow-y:auto;padding:16px 15px 40px}
+.mh{width:36px;height:4px;background:#1c2540;border-radius:2px;margin:0 auto 15px}
+.mt{font-size:17px;font-weight:800;margin-bottom:15px;letter-spacing:-.3px;color:#eef0ff}
+
+/* ── FORM ── */
+.f{margin-bottom:12px}
+.f label{display:block;font-size:10px;color:#6070a0;font-weight:700;letter-spacing:.4px;margin-bottom:5px}
+.f input,.f select,.f textarea{width:100%;background:#050810;border:1.5px solid #1c2540;border-radius:10px;padding:10px 11px;color:#dde2ff;font-size:14px}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:#16a34a}
+.f select option{background:#080e1e}
+.f textarea{resize:none;height:72px;line-height:1.5}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+
+/* ── TIPO ATIVO GRID ── */
+.tipo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:13px}
+.tipo-card{background:#0c1428;border:1.5px solid #151f3a;border-radius:11px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all .2s}
+.tipo-card.active{background:#0a2015;border-color:#16a34a}
+.tipo-card .tci{font-size:22px}
+.tipo-card .tcl{font-size:9px;font-weight:700;color:#6070a0;text-align:center}
+.tipo-card.active .tcl{color:#16a34a}
+
+/* ── BUTTONS ── */
+.bp{background:linear-gradient(135deg,#0b5230,#16a34a);color:#fff;border-radius:11px;padding:13px;width:100%;font-size:14px;font-weight:700;box-shadow:0 3px 14px #16a34a25;letter-spacing:.1px}
+.by2{background:linear-gradient(135deg,#7c3b0e,#d97706);color:#fff;border-radius:11px;padding:13px;width:100%;font-size:14px;font-weight:700;margin-top:7px}
+.bb2{background:linear-gradient(135deg,#1e3a7a,#3b6fd4);color:#fff;border-radius:11px;padding:13px;width:100%;font-size:14px;font-weight:700;margin-top:7px}
+.bg2{background:#151f3a;color:#dde2ff;border-radius:10px;padding:9px 13px;font-size:12px;font-weight:600}
+.bd{background:#f8717112;color:#f87171;border:1px solid #f8717135;border-radius:11px;padding:11px;width:100%;font-size:13px;font-weight:600;margin-top:8px}
+.bpu2{background:#a78bfa15;color:#a78bfa;border:1px solid #a78bfa35;border-radius:11px;padding:11px;width:100%;font-size:13px;font-weight:600;margin-top:7px}
+
+/* ── DETAIL ── */
+.dc{background:#0c1428;border:1px solid #151f3a;border-radius:13px;padding:12px;margin-bottom:10px}
+.dr{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid #151f3a28}
+.dr:last-child{border-bottom:none}
+.dl{font-size:12px;color:#6070a0;flex-shrink:0}
+.dv{font-size:12px;font-weight:600;color:#dde2ff;text-align:right;max-width:60%;word-break:break-word}
+
+/* ── SUMMARY ── */
+.sb{background:#071410;border:1px solid #0d2a1c;border-radius:12px;padding:12px;margin-bottom:10px}
+.sbt{font-size:9px;color:#16a34a;font-weight:700;letter-spacing:.5px;margin-bottom:8px}
+
+/* ── PHOTO ── */
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.pt{width:100%;aspect-ratio:1;border-radius:9px;object-fit:cover;border:1px solid #151f3a;cursor:pointer}
+.pa{width:100%;aspect-ratio:1;border-radius:9px;background:#151f3a;border:1.5px dashed #253060;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;font-size:18px;color:#6070a0}
+.pa span{font-size:9px}
+
+/* ── TIMELINE ── */
+.tl{display:flex;gap:10px;margin-bottom:12px}
+.tld{display:flex;flex-direction:column;align-items:center}
+.tlc{width:11px;height:11px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.tll{width:2px;flex:1;background:#151f3a;margin:4px 0}
+.tlbox{flex:1;background:#0c1428;border:1px solid #151f3a;border-radius:11px;padding:10px;margin-bottom:2px;cursor:pointer}
+.tlname{font-weight:700;font-size:12px;color:#eef0ff}
+.tlper{font-size:10px;color:#6070a0;margin-top:2px}
+.tlval{font-size:12px;font-weight:800;margin-top:3px}
+
+/* ── CHART ── */
+.chartw{display:flex;align-items:flex-end;gap:4px;height:72px}
+.chartb{flex:1;border-radius:4px 4px 0 0;min-height:4px}
+.chartl{font-size:9px;color:#6070a0;text-align:center;margin-top:3px}
+
+/* ── STATUS TABS ── */
+.stabs{display:flex;background:#0c1428;border:1px solid #151f3a;border-radius:11px;padding:3px;margin-bottom:12px;gap:3px;overflow-x:auto}
+.stab{flex:1;padding:8px 6px;border-radius:8px;font-size:10px;font-weight:700;color:#6070a0;background:none;border:none;white-space:nowrap;min-width:60px}
+.stab.active{background:#0a2015;color:#16a34a}
+
+/* ── TIPO TAG ── */
+.tt{font-size:9px;font-weight:700;color:#16a34a;background:#16a34a12;border:1px solid #16a34a28;border-radius:5px;padding:1px 6px;display:inline-block;margin-bottom:4px}
+
+/* ── ALERTA ── */
+.alerta{background:#3a0f0f;border:1px solid #f8717135;border-radius:10px;padding:9px 11px;font-size:12px;color:#f87171;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.alerta-info{background:#071a38;border-color:#4f8ef735;color:#4f8ef7}
+.alerta-yellow{background:#1a1000;border-color:#fbbf2435;color:#fbbf24}
+
+/* ── MANUTENÇÃO ── */
+.manut-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #151f3a28}
+.manut-item:last-child{border-bottom:none}
+.manut-tipo{font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px;display:inline-block}
+
+/* ── RESERVA ── */
+.res-item{background:#0c1428;border:1px solid #a78bfa30;border-radius:10px;padding:10px;margin-bottom:7px}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:40px 16px;color:#334060}
+.empty-ic{font-size:40px;margin-bottom:8px;opacity:.4}
+.empty-tx{font-size:13px;color:#50628a}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#0b5230;color:#fff;padding:8px 18px;border-radius:20px;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:100;white-space:nowrap;box-shadow:0 4px 16px #16a34a30}
+#toast.show{opacity:1}
+
+/* ── SEARCH RESULTS ── */
+#sresults{background:#0c1428;border:1px solid #151f3a;border-radius:11px;margin:0 13px 10px;overflow:hidden;display:none}
+#sresults.show{display:block}
+.sri{padding:10px 13px;border-bottom:1px solid #151f3a28;cursor:pointer;display:flex;align-items:center;gap:9px;font-size:13px;color:#dde2ff}
+.sri:last-child{border-bottom:none}
+.sri:active{background:#151f3a}
+
+/* ── RANKING ── */
+.rank-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid #151f3a28}
+.rank-item:last-child{border-bottom:none}
+.rank-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+
+/* ── VIEW TABS ── */
+.vt{display:flex;background:#0c1428;border:1px solid #151f3a;border-radius:11px;padding:3px;margin-bottom:12px;gap:3px}
+.vtb{flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:700;color:#6070a0;background:none;border:none}
+.vtb.active{background:#0a2015;color:#16a34a}
+
+/* ── FAB AREA ── */
+.fab-area{position:fixed;bottom:80px;right:13px;display:flex;flex-direction:column;gap:8px;z-index:25}
+.fab{background:linear-gradient(135deg,#0b5230,#16a34a);color:#fff;border:none;border-radius:50%;width:50px;height:50px;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px #16a34a40;cursor:pointer}
+.fab-sm{width:40px;height:40px;font-size:17px;background:#151f3a;box-shadow:0 2px 10px #00000040}
+
+/* ── CAMPOS ESPECIFICOS ── */
+.campos-especificos{background:#071410;border:1px solid #0d2a1c;border-radius:11px;padding:12px;margin-bottom:12px}
+.campos-titulo{font-size:10px;font-weight:700;color:#16a34a;letter-spacing:.4px;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div style="display:flex;align-items:center;flex:1">
+    <div class="hlogo">🏠</div>
+    <div class="htitle">
+      <div class="hname">LocaFácil</div>
+      <div class="hsub">Gestão de aluguéis e locações</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="bg2" style="padding:7px;font-size:16px" onclick="toggleSearch()" id="sbtn">🔍</button>
+    <div class="hclock">
+      <div class="htime" id="ht"></div>
+      <div class="hdate" id="hd"></div>
+    </div>
+  </div>
+</div>
+
+<div id="searchbar">
+  <input class="sinput" id="sinput" placeholder="Buscar clientes, ativos, contratos..." oninput="doSearch()" autocomplete="off"/>
+</div>
+<div id="sresults"></div>
+
+<div id="app"></div>
+
+<nav id="nav">
+  <button class="nb active" onclick="go('dash')" id="t-dash"><span class="ni">🏠</span>Início</button>
+  <button class="nb" onclick="go('ativos')" id="t-ativos"><span class="ni">📦</span>Ativos</button>
+  <button class="nb" onclick="go('contratos')" id="t-contratos"><span class="ni">📋</span>Contratos</button>
+  <button class="nb" onclick="go('clientes')" id="t-clientes"><span class="ni">👥</span>Clientes</button>
+  <button class="nb" onclick="go('fin')" id="t-fin"><span class="ni">📊</span>Financeiro</button>
+  <button class="nb" onclick="go('config')" id="t-config"><span class="ni">⚙️</span>Config</button>
+</nav>
+
+<div id="ov" onclick="closeModal()">
+  <div id="mb" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <div id="mc"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+let S = JSON.parse(localStorage.getItem('lf3')||'null') || {
+  clientes:[], ativos:[], contratos:[], nextId:1
+};
+// clientes: {id,nome,telefone,cpf,email,obs,foto}
+// ativos:   {id,tipo,nome,descricao,qtdTotal,status,fotos[],campos{},manutencoes[],reservas[]}
+// contratos:{id,ativoId,clienteId,dataInicio,dataFim,valor,tipoCob,qtd,obs,periodo,fotosEntrada[],fotosSaida[],status:'ativo'|'encerrado'|'reservado',pagamentos[],despesas[]}
+
+let V='dash', calOff=0, _fa=[], _fb=[], _ativoTipo='imovel', searchOpen=false;
+
+const TIPOS={
+  imovel:   {ic:'🏠',lb:'Imóvel',   cor:'#16a34a',bg:'#071410',campos:['endereco','quartos','iptu','condominio']},
+  equipamento:{ic:'🔧',lb:'Equipamento',cor:'#fbbf24',bg:'#1a0e02',campos:['marca','modelo','patrimonio']},
+  veiculo:  {ic:'🚗',lb:'Veículo',  cor:'#4f8ef7',bg:'#071428',campos:['placa','renavam','km']},
+  festa:    {ic:'🎉',lb:'Festa',    cor:'#f472b6',bg:'#1a0716',campos:['descricao_item']},
+  movel:    {ic:'🪑',lb:'Móvel',    cor:'#a78bfa',bg:'#0e0720',campos:[]},
+  eletronico:{ic:'📱',lb:'Eletrônico',cor:'#22d3ee',bg:'#041418',campos:['marca','modelo','serial']},
+  esporte:  {ic:'⚽',lb:'Esporte',  cor:'#f97316',bg:'#1a0802',campos:[]},
+  outro:    {ic:'📌',lb:'Outro',    cor:'#8090b8',bg:'#0e1428',campos:[]},
+};
+
+function sv(){localStorage.setItem('lf3',JSON.stringify(S));}
+function nid(){return S.nextId++;}
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+const R=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const FD=s=>{if(!s)return'—';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`;};
+const TD=()=>new Date().toISOString().split('T')[0];
+const MO=s=>s?s.slice(0,7):'';
+const CM=()=>new Date().toISOString().slice(0,7);
+const diffD=(a,b)=>Math.max(0,Math.round((new Date(b)-new Date(a))/86400000));
+
+const gc=id=>S.clientes.find(x=>x.id===Number(id));
+const ga=id=>S.ativos.find(x=>x.id===Number(id));
+const gct=id=>S.contratos.find(x=>x.id===Number(id));
+const tp=t=>TIPOS[t]||TIPOS.outro;
+
+function tpago(c){return(c.pagamentos||[]).reduce((s,p)=>s+Number(p.valor),0);}
+function tdesp(c){return(c.despesas||[]).reduce((s,d)=>s+Number(d.valor),0);}
+
+function ctAtivosDeAtivo(ativoId){return S.contratos.filter(c=>c.ativoId===Number(ativoId)&&c.status==='ativo');}
+function ctReservasDeAtivo(ativoId){return S.contratos.filter(c=>c.ativoId===Number(ativoId)&&c.status==='reservado');}
+
+function isOverdue(c){
+  if(c.status!=='ativo') return false;
+  if(c.tipoCob==='mensal_fixo'){
+    return c.periodo&&new Date().getDate()>Number(c.periodo)&&!pagoMesAt(c.id);
+  }
+  return c.dataFim&&c.dataFim<TD();
+}
+function pagoMesAt(cid){
+  const c=gct(cid);if(!c)return false;
+  return(c.pagamentos||[]).some(p=>MO(p.data)===CM());
+}
+
+function ocupPct(ativoId){
+  const cts=S.contratos.filter(c=>c.ativoId===Number(ativoId)&&(c.status==='ativo'||c.status==='encerrado'));
+  if(!cts.length) return 0;
+  const inicio=cts.reduce((mn,c)=>c.dataInicio<mn?c.dataInicio:mn,cts[0].dataInicio);
+  const total=diffD(inicio,TD())||1;
+  const ocup=cts.reduce((s,c)=>{const fim=c.dataFim&&c.dataFim<TD()?c.dataFim:TD();return s+diffD(c.dataInicio,fim);},0);
+  return Math.min(100,Math.round(ocup/total*100));
+}
+
+function totalRecAtivo(ativoId){
+  return S.contratos.filter(c=>c.ativoId===Number(ativoId)).reduce((s,c)=>s+tpago(c),0);
+}
+function totalDespAtivo(ativoId){
+  const a=ga(ativoId);
+  const dManut=(a?.manutencoes||[]).reduce((s,m)=>s+Number(m.custo||0),0);
+  return S.contratos.filter(c=>c.ativoId===Number(ativoId)).reduce((s,c)=>s+tdesp(c),0)+dManut;
+}
+
+function avt(c,sz=40){
+  if(c?.foto) return`<img src="${c.foto}" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;border:2px solid #151f3a;flex-shrink:0"/>`;
+  const l=c?.nome?.[0]?.toUpperCase()||'?';
+  return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#0a2015;color:#16a34a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:${Math.round(sz*.38)}px;flex-shrink:0;border:2px solid #151f3a">${l}</div>`;
+}
+function bdg(st){
+  const m={ativo:'bg Ativo',encerrado:'bgr Encerrado',reservado:'bpu Reservado',atrasado:'br Atrasado',disponivel:'bb Disponível',ocupado:'by Em uso',manutencao:'br Manutenção'};
+  const[cls,lb]=(m[st]||'bgr '+st).split(' ');
+  return`<span class="bdg ${cls}">${lb}</span>`;
+}
+function statusAtivo(a){
+  const em=ctAtivosDeAtivo(a.id).length;
+  const res=ctReservasDeAtivo(a.id).length;
+  if(a.status==='manutencao') return'manutencao';
+  if(em>=a.qtdTotal) return'ocupado';
+  if(res>0&&em===0) return'reservado';
+  if(em>0) return'ocupado';
+  return'disponivel';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CLOCK
+// ══════════════════════════════════════════════════════════════
+function tick(){
+  const d=new Date(),ds=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],ms=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  document.getElementById('ht').textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('hd').textContent=`${ds[d.getDay()]}, ${d.getDate()} ${ms[d.getMonth()]}`;
+  // badge nav atraso
+  const atrasados=S.contratos.filter(c=>isOverdue(c)).length;
+  const nb=document.querySelector('#t-contratos .nbadge');
+  if(atrasados>0){if(!nb){const b=document.createElement('span');b.className='nbadge';b.textContent=atrasados;document.getElementById('t-contratos').appendChild(b);}else nb.textContent=atrasados;}
+  else if(nb) nb.remove();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SEARCH
+// ══════════════════════════════════════════════════════════════
+function toggleSearch(){
+  searchOpen=!searchOpen;
+  document.getElementById('searchbar').classList.toggle('show',searchOpen);
+  document.getElementById('sresults').classList.remove('show');
+  if(searchOpen) document.getElementById('sinput').focus();
+}
+function doSearch(){
+  const q=document.getElementById('sinput').value.trim().toLowerCase();
+  const sr=document.getElementById('sresults');
+  if(q.length<1){sr.classList.remove('show');return;}
+  const results=[];
+  S.clientes.filter(c=>c.nome.toLowerCase().includes(q)||c.telefone?.includes(q)).forEach(c=>results.push({tipo:'cliente',ic:'👤',nome:c.nome,sub:c.telefone,fn:`openCliente(${c.id})`}));
+  S.ativos.filter(a=>a.nome.toLowerCase().includes(q)||(a.campos?.endereco||'').toLowerCase().includes(q)).forEach(a=>results.push({tipo:'ativo',ic:tp(a.tipo).ic,nome:a.nome||(a.campos?.endereco||''),sub:tp(a.tipo).lb,fn:`openAtivo(${a.id})`}));
+  S.contratos.filter(c=>{const cl=gc(c.clienteId);const at=ga(c.ativoId);return cl?.nome.toLowerCase().includes(q)||at?.nome.toLowerCase().includes(q)||(at?.campos?.endereco||'').toLowerCase().includes(q);}).forEach(c=>{const cl=gc(c.clienteId);const at=ga(c.ativoId);results.push({tipo:'contrato',ic:'📋',nome:cl?.nome||'?',sub:(at?.campos?.endereco||at?.nome||'?'),fn:`openContrato(${c.id})`});});
+  if(results.length===0){sr.innerHTML='<div class="sri" style="color:#6070a0">Nenhum resultado encontrado</div>';sr.classList.add('show');return;}
+  sr.innerHTML=results.slice(0,8).map(r=>`<div class="sri" onclick="${r.fn};toggleSearch()"><span style="font-size:18px">${r.ic}</span><div><div style="font-weight:600">${r.nome}</div><div style="font-size:10px;color:#6070a0">${r.sub}</div></div></div>`).join('');
+  sr.classList.add('show');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════════════════
+function go(v){
+  V=v;
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('t-'+v)?.classList.add('active');
+  render();
+}
+function render(){
+  const el=document.getElementById('app');
+  if(V==='dash') el.innerHTML=rDash();
+  else if(V==='ativos') el.innerHTML=rAtivos();
+  else if(V==='contratos') el.innerHTML=rContratos();
+  else if(V==='clientes') el.innerHTML=rClientes();
+  else if(V==='fin') el.innerHTML=rFin();
+  else if(V==='config') el.innerHTML=rConfig();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════════════
+function rDash(){
+  const m=CM();
+  const ctAt=S.contratos.filter(c=>c.status==='ativo');
+  const atrasados=S.contratos.filter(c=>isOverdue(c));
+  const recMes=S.contratos.reduce((s,c)=>s+(c.pagamentos||[]).filter(p=>MO(p.data)===m).reduce((a,p)=>a+Number(p.valor),0),0);
+  const despMes=S.contratos.reduce((s,c)=>s+(c.despesas||[]).filter(d=>MO(d.data)===m).reduce((a,d)=>a+Number(d.valor),0),0);
+  const aRec=ctAt.filter(c=>c.tipoCob==='mensal_fixo'&&!pagoMesAt(c.id)).reduce((s,c)=>s+Number(c.valor),0);
+  const disponíveis=S.ativos.filter(a=>statusAtivo(a)==='disponivel').length;
+  const emUso=S.ativos.filter(a=>statusAtivo(a)==='ocupado').length;
+  const reservados=S.ativos.filter(a=>statusAtivo(a)==='reservado').length;
+
+  // calendário
+  const cD=new Date();cD.setDate(cD.getDate()+calOff);
+  const cStr=cD.toISOString().split('T')[0];
+  const cDay=cD.getDate();
+  const ds2=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const ms2=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const cLbl=`${ds2[cD.getDay()]}, ${cD.getDate()} de ${ms2[cD.getMonth()]}`;
+  const cNome=calOff===0?'Hoje':calOff===1?'Amanhã':calOff===-1?'Ontem':cLbl;
+  const vencCal=S.contratos.filter(c=>c.status==='ativo'&&c.tipoCob==='mensal_fixo'&&Number(c.periodo)===cDay);
+  const devCal=S.contratos.filter(c=>c.status==='ativo'&&c.dataFim===cStr);
+
+  const stats=[
+    {ic:'💰',lb:'Recebido no Mês',vl:R(recMes),cl:'#16a34a',bg:'#071410'},
+    {ic:'📅',lb:'A Receber (Alug.)',vl:R(aRec),cl:'#4f8ef7',bg:'#070e1e'},
+    {ic:'✅',lb:'Ativos Disponíveis',vl:disponíveis,cl:'#4f8ef7',bg:'#070e1e'},
+    {ic:'📦',lb:'Em Uso / Reserva',vl:`${emUso} / ${reservados}`,cl:'#fbbf24',bg:'#18100a'},
+    {ic:'📈',lb:'Lucro do Mês',vl:R(recMes-despMes),cl:recMes-despMes>=0?'#16a34a':'#f87171',bg:'#071410'},
+    {ic:'⚠️',lb:'Contratos em Atraso',vl:atrasados.length,cl:'#f87171',bg:'#180808'},
+  ];
+
+  // Próximas manutenções
+  const proxManut=S.ativos.flatMap(a=>(a.manutencoes||[]).filter(m=>m.proxData&&m.proxData>=TD()).map(m=>({...m,ativoNome:a.nome||a.campos?.endereco||'?',ativoId:a.id}))).sort((a,b)=>a.proxData.localeCompare(b.proxData)).slice(0,3);
+
+  return`
+  <div class="sg">${stats.map(s=>`<div class="sc"><div class="scic" style="background:${s.bg}">${s.ic}</div><div class="sclb">${s.lb}</div><div class="scvl" style="color:${s.cl}">${s.vl}</div></div>`).join('')}</div>
+
+  ${atrasados.length>0?`<div class="alerta">⚠️ <strong>${atrasados.length} contrato(s) em atraso</strong> — toque em Contratos para ver</div>`:''}
+
+  <div class="card" style="margin-bottom:13px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+      <button class="bg2" style="padding:6px 10px;font-size:14px" onclick="calOff--;render()">‹</button>
+      <div style="text-align:center"><div style="font-weight:800;font-size:13px;color:#16a34a">${cNome}</div><div style="font-size:10px;color:#6070a0">${cLbl}</div></div>
+      <button class="bg2" style="padding:6px 10px;font-size:14px" onclick="calOff++;render()">›</button>
+    </div>
+    ${vencCal.length===0&&devCal.length===0?'<div style="text-align:center;color:#334060;padding:12px;font-size:12px">Nenhum vencimento neste dia</div>':
+    [...vencCal.map(c=>{const cl=gc(c.clienteId);const at=ga(c.ativoId);const at2=isOverdue(c);return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #151f3a28" onclick="openContrato(${c.id})"><div style="width:7px;height:7px;border-radius:50%;background:${at2?'#f87171':'#16a34a'};flex-shrink:0"></div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#eef0ff">${cl?.nome||'?'}</div><div style="font-size:10px;color:#6070a0">${at?.campos?.endereco||at?.nome||'?'}</div></div><div style="font-weight:800;font-size:12px;color:${at2?'#f87171':'#16a34a'}">${R(c.valor)}</div></div>`;}),
+    ...devCal.map(c=>{const cl=gc(c.clienteId);const at=ga(c.ativoId);const venc=c.dataFim<TD();return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #151f3a28" onclick="openContrato(${c.id})"><div style="width:7px;height:7px;border-radius:50%;background:${venc?'#f87171':'#fbbf24'};flex-shrink:0"></div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#eef0ff">${cl?.nome||'?'}</div><div style="font-size:10px;color:#6070a0">Devolução · ${at?.nome||'?'}</div></div><div style="font-weight:800;font-size:12px;color:${venc?'#f87171':'#fbbf24'}">${R(c.valor)}</div></div>`})].join('')}
+  </div>
+
+  ${proxManut.length>0?`
+  <div class="st">🔧 MANUTENÇÕES PRÓXIMAS</div>
+  ${proxManut.map(m=>`<div class="li yellow" onclick="openAtivo(${m.ativoId})">
+    <div class="li-row">
+      <div class="li-ic" style="background:#1a0e02">🔧</div>
+      <div class="li-info"><div class="li-name">${m.ativoNome}</div><div class="li-sub">${m.tipo} · ${FD(m.proxData)}</div></div>
+      <div class="li-right"><div class="li-val" style="color:#fbbf24">${FD(m.proxData)}</div></div>
+    </div>
+  </div>`).join('')}`:''}
+
+  <div class="st">CONTRATOS ATIVOS RECENTES</div>
+  ${ctAt.length===0?`<div class="empty"><div class="empty-ic">📋</div><div class="empty-tx">Nenhum contrato ativo ainda</div></div>`:
+  ctAt.slice(-5).reverse().map(c=>{
+    const cl=gc(c.clienteId);const at=ga(c.ativoId);const atd=isOverdue(c);const t=tp(at?.tipo);
+    return`<div class="li ${atd?'red':''}" onclick="openContrato(${c.id})">
+      <div class="li-row">
+        <div class="li-ic" style="background:${t.bg}">${t.ic}</div>
+        <div class="li-info"><div class="li-name">${at?.campos?.endereco||at?.nome||'?'}</div><div class="li-sub">${cl?.nome||'?'} · ${c.tipoCob==='mensal_fixo'?'Vence dia '+c.periodo:'Dev. '+FD(c.dataFim)}</div></div>
+        <div class="li-right"><div class="li-val" style="color:${t.cor}">${R(c.valor)}</div>${bdg(atd?'atrasado':'ativo')}</div>
+      </div>
+    </div>`;}).join('')}
+  <div style="height:16px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ATIVOS
+// ══════════════════════════════════════════════════════════════
+let filtroAtivo='todos';
+function rAtivos(){
+  const statusGrupos=[
+    {k:'todos',lb:'Todos'},
+    {k:'disponivel',lb:'Disponível'},
+    {k:'ocupado',lb:'Em uso'},
+    {k:'reservado',lb:'Reservado'},
+    {k:'manutencao',lb:'Manutenção'},
+  ];
+  const atFiltrados=filtroAtivo==='todos'?S.ativos:S.ativos.filter(a=>statusAtivo(a)===filtroAtivo);
+
+  return`
+  <div class="sh"><h2>Ativos</h2><button class="bg2" onclick="openNovoAtivo()">+ Novo</button></div>
+  <div class="stabs">${statusGrupos.map(g=>`<button class="stab ${filtroAtivo===g.k?'active':''}" onclick="filtroAtivo='${g.k}';render()">${g.lb} ${g.k==='todos'?'('+S.ativos.length+')':''}</button>`).join('')}</div>
+  ${atFiltrados.length===0?`<div class="empty"><div class="empty-ic">📦</div><div class="empty-tx">Nenhum ativo ${filtroAtivo==='todos'?'cadastrado':'com este status'}</div></div>`:
+  atFiltrados.map(a=>{
+    const t=tp(a.tipo);const st=statusAtivo(a);
+    const ctsAt=ctAtivosDeAtivo(a.id);const ctsRes=ctReservasDeAtivo(a.id);
+    const qtdDisp=Math.max(0,a.qtdTotal-ctsAt.length);
+    const totalRec=totalRecAtivo(a.id);const totalDesp=totalDespAtivo(a.id);
+    const ocp=ocupPct(a.id);
+    const nome=a.campos?.endereco||a.nome||'—';
+    return`<div class="li ${st==='atrasado'?'red':st==='reservado'?'purple':''}" onclick="openAtivo(${a.id})">
+      <div class="li-row">
+        <div class="li-ic" style="background:${t.bg}">${t.ic}</div>
+        <div class="li-info">
+          <div class="tt">${t.lb}</div>
+          <div class="li-name">${nome}</div>
+          <div class="li-sub">${a.qtdTotal>1?`${qtdDisp} de ${a.qtdTotal} disponíveis`:ctsAt.length>0?gc(ctsAt[0].clienteId)?.nome||'Ocupado':'Disponível'}</div>
+        </div>
+        <div class="li-right">
+          <div class="li-val" style="color:${t.cor}">${R(totalRec)}</div>
+          ${bdg(st)}
+        </div>
+      </div>
+      <div class="pb"><div class="pf" style="width:${ocp}%;background:${t.cor}"></div></div>
+      <div class="pl"><span>Ocupação: ${ocp}%</span><span>Lucro: ${R(totalRec-totalDesp)}</span></div>
+    </div>`;}).join('')}
+  <div style="height:16px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CONTRATOS
+// ══════════════════════════════════════════════════════════════
+let filtroContrato='ativo';
+function rContratos(){
+  const tabs=[{k:'ativo',lb:'Ativos'},{k:'reservado',lb:'Reservas'},{k:'encerrado',lb:'Encerrados'}];
+  const filtered=S.contratos.filter(c=>c.status===filtroContrato);
+  const atrasados=S.contratos.filter(c=>isOverdue(c));
+
+  return`
+  <div class="sh"><h2>Contratos</h2><button class="bg2" onclick="openNovoContrato()">+ Novo</button></div>
+  ${atrasados.length>0&&filtroContrato==='ativo'?`<div class="alerta">⚠️ ${atrasados.length} contrato(s) em atraso</div>`:''}
+  <div class="vt">${tabs.map(t=>`<button class="vtb ${filtroContrato===t.k?'active':''}" onclick="filtroContrato='${t.k}';render()">${t.lb} (${S.contratos.filter(c=>c.status===t.k).length})</button>`).join('')}</div>
+  ${filtered.length===0?`<div class="empty"><div class="empty-ic">📋</div><div class="empty-tx">Nenhum contrato ${filtroContrato==='ativo'?'ativo':filtroContrato==='reservado'?'reservado':'encerrado'}</div></div>`:
+  filtered.map(c=>{
+    const cl=gc(c.clienteId);const at=ga(c.ativoId);const t=tp(at?.tipo);
+    const atd=isOverdue(c);const pago=tpago(c);
+    const nome=at?.campos?.endereco||at?.nome||'?';
+    return`<div class="li ${atd?'red':c.status==='reservado'?'purple':''}" onclick="openContrato(${c.id})">
+      <div class="li-row">
+        <div class="li-ic" style="background:${t.bg}">${t.ic}</div>
+        <div class="li-info">
+          <div class="li-name">${nome}</div>
+          <div class="li-sub">${cl?.nome||'?'} · ${c.tipoCob==='mensal_fixo'?'Vence dia '+c.periodo:'Dev. '+FD(c.dataFim)}</div>
+        </div>
+        <div class="li-right">
+          <div class="li-val" style="color:${atd?'#f87171':'#16a34a'}">${R(pago)}</div>
+          ${bdg(atd?'atrasado':c.status)}
+        </div>
+      </div>
+      ${c.status!=='encerrado'?`<div class="pb"><div class="pf" style="width:${c.valor>0?Math.min(100,pago/Number(c.valor)*100):0}%;background:${atd?'#f87171':'#16a34a'}"></div></div>`:''}
+    </div>`;}).join('')}
+  <div style="height:16px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CLIENTES
+// ══════════════════════════════════════════════════════════════
+function rClientes(){
+  return`
+  <div class="sh"><h2>Clientes</h2><button class="bg2" onclick="openNovoCliente()">+ Novo</button></div>
+  ${S.clientes.length===0?`<div class="empty"><div class="empty-ic">👥</div><div class="empty-tx">Nenhum cliente cadastrado</div></div>`:
+  S.clientes.map(c=>{
+    const cts=S.contratos.filter(ct=>ct.clienteId===c.id&&ct.status==='ativo');
+    const totalRec=S.contratos.filter(ct=>ct.clienteId===c.id).reduce((s,ct)=>s+tpago(ct),0);
+    return`<div class="li" onclick="openCliente(${c.id})">
+      <div class="li-row">
+        ${avt(c,42)}
+        <div class="li-info"><div class="li-name">${c.nome}</div><div class="li-sub">${c.telefone||'—'}</div></div>
+        <div class="li-right"><div class="li-val" style="color:#16a34a">${R(totalRec)}</div><div class="li-meta">${cts.length} ativo(s)</div></div>
+      </div>
+    </div>`;}).join('')}
+  <div style="height:16px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FINANCEIRO
+// ══════════════════════════════════════════════════════════════
+function rFin(){
+  const ms=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const now=new Date();
+  const hist=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const mk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const rec=S.contratos.reduce((s,c)=>s+(c.pagamentos||[]).filter(p=>MO(p.data)===mk).reduce((a,p)=>a+Number(p.valor),0),0);
+    const desp=S.contratos.reduce((s,c)=>s+(c.despesas||[]).filter(dd=>MO(dd.data)===mk).reduce((a,dd)=>a+Number(dd.valor),0),0)+
+      S.ativos.reduce((s,a)=>s+(a.manutencoes||[]).filter(m=>MO(m.data)===mk).reduce((a2,m)=>a2+Number(m.custo||0),0),0);
+    hist.push({lb:ms[d.getMonth()],rec,desp,lucro:rec-desp});
+  }
+  const maxV=Math.max(...hist.map(h=>h.rec),1);
+  const m=CM();
+  const recMes=hist[5]?.rec||0,despMes=hist[5]?.desp||0;
+  const totalRec=S.contratos.reduce((s,c)=>s+tpago(c),0);
+
+  // Ranking ativos mais rentáveis
+  const rank=S.ativos.map(a=>({nome:a.campos?.endereco||a.nome||'?',tipo:a.tipo,rec:totalRecAtivo(a.id),lucro:totalRecAtivo(a.id)-totalDespAtivo(a.id),ocp:ocupPct(a.id)})).sort((a,b)=>b.rec-a.rec).slice(0,5);
+
+  const ultPag=[...S.contratos.flatMap(c=>(c.pagamentos||[]).map(p=>({...p,ref:ga(c.ativoId)?.campos?.endereco||ga(c.ativoId)?.nome||'?',cli:gc(c.clienteId)?.nome||'?'})))].sort((a,b)=>(b.data||'').localeCompare(a.data||'')).slice(0,6);
+  const ultDesp=[
+    ...S.contratos.flatMap(c=>(c.despesas||[]).map(d=>({...d,ref:ga(c.ativoId)?.campos?.endereco||ga(c.ativoId)?.nome||'?'}))),
+    ...S.ativos.flatMap(a=>(a.manutencoes||[]).map(m=>({data:m.data,valor:m.custo||0,desc:m.tipo+' manutenção',ref:a.campos?.endereco||a.nome||'?'})))
+  ].sort((a,b)=>(b.data||'').localeCompare(a.data||'')).slice(0,6);
+
+  return`
+  <div class="sh"><h2>Financeiro</h2></div>
+  <div class="sg" style="margin-bottom:13px">
+    <div class="sc"><div class="scic" style="background:#071410">💰</div><div class="sclb">Recebido no Mês</div><div class="scvl" style="color:#16a34a">${R(recMes)}</div></div>
+    <div class="sc"><div class="scic" style="background:#180808">💸</div><div class="sclb">Despesas no Mês</div><div class="scvl" style="color:#f87171">${R(despMes)}</div></div>
+    <div class="sc"><div class="scic" style="background:#071410">📈</div><div class="sclb">Lucro do Mês</div><div class="scvl" style="color:${recMes-despMes>=0?'#16a34a':'#f87171'}">${R(recMes-despMes)}</div></div>
+    <div class="sc"><div class="scic" style="background:#071410">🏦</div><div class="sclb">Total Recebido</div><div class="scvl" style="color:#16a34a">${R(totalRec)}</div></div>
+  </div>
+
+  <div class="dc" style="margin-bottom:13px">
+    <div class="st" style="margin:0 0 10px">RECEITA ÚLTIMOS 6 MESES</div>
+    <div class="chartw">${hist.map(h=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center"><div class="chartb" style="width:100%;background:linear-gradient(180deg,#16a34a,#0b5230);height:${Math.max(4,h.rec/maxV*65)}px"></div><div class="chartl">${h.lb}</div></div>`).join('')}</div>
+  </div>
+
+  ${rank.length>0?`
+  <div class="dc" style="margin-bottom:13px">
+    <div class="st" style="margin:0 0 10px">🏆 RANKING DE ATIVOS</div>
+    ${rank.map((r,i)=>`<div class="rank-item">
+      <div class="rank-num" style="background:${['#fbbf24','#9ca3af','#cd7c2a','#151f3a','#151f3a'][i]};color:${i<3?'#000':'#dde2ff'}">${i+1}</div>
+      <div style="flex:1"><div style="font-size:12px;font-weight:700;color:#eef0ff">${r.nome}</div><div style="font-size:10px;color:#6070a0">${tp(r.tipo).lb} · Ocupação: ${r.ocp}%</div></div>
+      <div style="text-align:right"><div style="font-size:12px;font-weight:800;color:#16a34a">${R(r.rec)}</div><div style="font-size:10px;color:#6070a0">Lucro: ${R(r.lucro)}</div></div>
+    </div>`).join('')}
+  </div>`:''}
+
+  <div class="dc" style="margin-bottom:13px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div class="st" style="margin:0">ÚLTIMOS RECEBIMENTOS</div>
+    </div>
+    ${ultPag.length===0?'<div style="text-align:center;color:#334060;font-size:12px;padding:8px">Nenhum recebimento</div>':
+    ultPag.map(p=>`<div class="dr"><div><div style="font-size:12px;font-weight:600;color:#eef0ff">${p.ref}</div><div style="font-size:10px;color:#6070a0">${p.cli} · ${FD(p.data)}</div></div><div style="color:#16a34a;font-weight:800;font-size:13px">${R(p.valor)}</div></div>`).join('')}
+  </div>
+
+  <div class="dc">
+    <div class="st" style="margin:0 0 10px">ÚLTIMAS DESPESAS</div>
+    ${ultDesp.length===0?'<div style="text-align:center;color:#334060;font-size:12px;padding:8px">Nenhuma despesa</div>':
+    ultDesp.map(d=>`<div class="dr"><div><div style="font-size:12px;font-weight:600;color:#eef0ff">${d.ref}</div><div style="font-size:10px;color:#6070a0">${d.desc||'Despesa'} · ${FD(d.data)}</div></div><div style="color:#f87171;font-weight:800;font-size:13px">-${R(d.valor)}</div></div>`).join('')}
+  </div>
+  <div style="height:16px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MODAL: CLIENTE
+// ══════════════════════════════════════════════════════════════
+let _fp=null;
+function openNovoCliente(){
+  _fp=null;
+  openModal(`<div class="mt">Novo cliente</div>
+    <div style="display:flex;justify-content:center;margin-bottom:13px">
+      <label style="cursor:pointer;position:relative">
+        <div id="ap" style="width:68px;height:68px;border-radius:50%;background:#0a2015;color:#16a34a;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid #151f3a">👤</div>
+        <div style="position:absolute;bottom:0;right:0;background:#16a34a;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px">✏️</div>
+        <input type="file" accept="image/*" onchange="hFoto(event)" style="display:none"/>
+      </label>
+    </div>
+    <div class="f"><label>NOME COMPLETO *</label><input id="c-nome" placeholder="João Silva"/></div>
+    <div class="fr">
+      <div class="f"><label>TELEFONE *</label><input id="c-tel" placeholder="11 99999-0000" type="tel"/></div>
+      <div class="f"><label>CPF / CNPJ</label><input id="c-doc" placeholder="000.000.000-00"/></div>
+    </div>
+    <div class="f"><label>E-MAIL</label><input id="c-email" placeholder="email@exemplo.com" type="email"/></div>
+    <div class="f"><label>OBSERVAÇÕES</label><textarea id="c-obs" placeholder="Informações adicionais..."></textarea></div>
+    <button class="bp" onclick="svCliente()">Cadastrar cliente</button>`);
+}
+function hFoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{_fp=ev.target.result;document.getElementById('ap').innerHTML=`<img src="${_fp}" style="width:68px;height:68px;border-radius:50%;object-fit:cover"/>`;};r.readAsDataURL(f);
+}
+function svCliente(id){
+  const nome=document.getElementById('c-nome').value.trim();
+  const tel=document.getElementById('c-tel').value.trim();
+  if(!nome||!tel){toast('Preencha nome e telefone');return;}
+  const obj={nome,telefone:tel,cpf:document.getElementById('c-doc').value.trim(),email:document.getElementById('c-email').value.trim(),obs:document.getElementById('c-obs').value.trim(),foto:_fp};
+  if(id) S.clientes=S.clientes.map(x=>x.id===Number(id)?{...x,...obj}:x);
+  else S.clientes.push({id:nid(),...obj});
+  sv();closeModal();render();toast('Cliente salvo ✓');
+}
+function openCliente(id){
+  const c=gc(id);
+  const cts=S.contratos.filter(ct=>ct.clienteId===Number(id));
+  const totalRec=cts.reduce((s,ct)=>s+tpago(ct),0);
+  openModal(`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      ${avt(c,52)}
+      <div><div style="font-weight:800;font-size:16px;color:#eef0ff">${c.nome}</div>
+      <div style="color:#6070a0;font-size:12px">${c.telefone}</div>
+      ${c.cpf?`<div style="color:#6070a0;font-size:11px">${c.cpf}</div>`:''}
+      ${c.email?`<div style="color:#6070a0;font-size:11px">${c.email}</div>`:''}
+      </div>
+    </div>
+    <div class="sb"><div class="sbt">TOTAL PAGO POR ESTE CLIENTE</div><div style="font-size:22px;font-weight:900;color:#16a34a">${R(totalRec)}</div><div style="font-size:10px;color:#6070a0;margin-top:2px">${cts.length} contrato(s) no histórico</div></div>
+    ${c.obs?`<div style="background:#151f3a;border-radius:9px;padding:9px;font-size:12px;color:#8090b8;margin-bottom:11px">${c.obs}</div>`:''}
+    <div style="display:flex;gap:7px;margin-bottom:13px">
+      <button class="bg2" style="flex:1" onclick="editCliente(${id})">✏️ Editar</button>
+      <button class="bp" style="flex:1;padding:10px;font-size:12px" onclick="closeModal();setTimeout(()=>openNovoContrato(null,${id}),80)">+ Contrato</button>
+    </div>
+    <div class="st">CONTRATOS (${cts.length})</div>
+    ${cts.length===0?'<div style="text-align:center;color:#334060;font-size:12px;padding:10px">Nenhum contrato</div>':
+    cts.map(ct=>{const at=ga(ct.ativoId);const t=tp(at?.tipo);const atd=isOverdue(ct);return`<div class="li ${atd?'red':''}" onclick="closeModal();setTimeout(()=>openContrato(${ct.id}),80)">
+      <div class="li-row"><div class="li-ic" style="background:${t.bg};font-size:16px">${t.ic}</div>
+      <div class="li-info"><div class="li-name">${at?.campos?.endereco||at?.nome||'?'}</div><div class="li-sub">${FD(ct.dataInicio)} → ${ct.dataFim?FD(ct.dataFim):'Em aberto'}</div></div>
+      <div class="li-right"><div class="li-val" style="color:#16a34a">${R(tpago(ct))}</div>${bdg(atd?'atrasado':ct.status)}</div></div>
+    </div>`;}).join('')}
+    <button class="bd" onclick="delCliente(${id})">🗑 Excluir cliente</button>`);
+}
+function editCliente(id){
+  const c=gc(id);_fp=c.foto||null;
+  openModal(`<div class="mt">Editar cliente</div>
+    <div style="display:flex;justify-content:center;margin-bottom:13px">
+      <label style="cursor:pointer;position:relative">
+        <div id="ap">${avt(c,68)}</div>
+        <div style="position:absolute;bottom:0;right:0;background:#16a34a;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px">✏️</div>
+        <input type="file" accept="image/*" onchange="hFoto(event)" style="display:none"/>
+      </label>
+    </div>
+    <div class="f"><label>NOME *</label><input id="c-nome" value="${c.nome}"/></div>
+    <div class="fr">
+      <div class="f"><label>TELEFONE *</label><input id="c-tel" value="${c.telefone||''}" type="tel"/></div>
+      <div class="f"><label>CPF / CNPJ</label><input id="c-doc" value="${c.cpf||''}"/></div>
+    </div>
+    <div class="f"><label>E-MAIL</label><input id="c-email" value="${c.email||''}" type="email"/></div>
+    <div class="f"><label>OBSERVAÇÕES</label><textarea id="c-obs">${c.obs||''}</textarea></div>
+    <button class="bp" onclick="svCliente(${id})">Salvar alterações</button>`);
+}
+function delCliente(id){
+  if(!confirm('Excluir este cliente?'))return;
+  S.clientes=S.clientes.filter(x=>x.id!==Number(id));
+  sv();closeModal();render();toast('Cliente excluído');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MODAL: ATIVO
+// ══════════════════════════════════════════════════════════════
+function openNovoAtivo(){
+  _fa=[];_ativoTipo='imovel';
+  openModal(`<div class="mt">Novo ativo</div>
+    <div style="font-size:10px;font-weight:700;color:#6070a0;letter-spacing:.4px;margin-bottom:7px">TIPO DE ATIVO *</div>
+    <div class="tipo-grid" id="tipo-grid">
+      ${Object.entries(TIPOS).map(([k,t])=>`<div class="tipo-card ${k==='imovel'?'active':''}" onclick="selTipo('${k}')"><span class="tci">${t.ic}</span><span class="tcl">${t.lb}</span></div>`).join('')}
+    </div>
+    <div id="campos-ativo"></div>
+    <div class="f"><label>NOME / IDENTIFICAÇÃO</label><input id="at-nome" placeholder="Ex: Betoneira 400L, Mesa de Sinuca..."/></div>
+    <div class="fr">
+      <div class="f"><label>QUANTIDADE TOTAL</label><input type="number" id="at-qtd" value="1" min="1"/></div>
+      <div class="f"><label>STATUS</label><select id="at-st"><option value="disponivel">Disponível</option><option value="manutencao">Manutenção</option></select></div>
+    </div>
+    <div class="f"><label>DESCRIÇÃO</label><textarea id="at-desc" placeholder="Detalhes, características, estado..."></textarea></div>
+    <div class="f"><label>FOTOS</label><div class="pg" id="fg-at"><label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fa','fg-at')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svAtivo()">Cadastrar ativo</button>`);
+  renderCamposAtivo('imovel');
+}
+function selTipo(t){
+  _ativoTipo=t;
+  document.querySelectorAll('.tipo-card').forEach(c=>c.classList.remove('active'));
+  document.querySelector(`.tipo-card[onclick="selTipo('${t}')"]`)?.classList.add('active');
+  renderCamposAtivo(t);
+}
+function renderCamposAtivo(tipo){
+  const campos=TIPOS[tipo]?.campos||[];
+  const el=document.getElementById('campos-ativo');if(!el)return;
+  if(campos.length===0){el.innerHTML='';return;}
+  const labels={endereco:'ENDEREÇO',quartos:'QUARTOS',iptu:'IPTU (anual R$)',condominio:'CONDOMÍNIO (mensal R$)',marca:'MARCA',modelo:'MODELO',patrimonio:'Nº PATRIMÔNIO',placa:'PLACA',renavam:'RENAVAM',km:'QUILOMETRAGEM',serial:'Nº SÉRIE',descricao_item:'DESCRIÇÃO DO ITEM'};
+  el.innerHTML=`<div class="campos-especificos"><div class="campos-titulo">INFORMAÇÕES DO ${TIPOS[tipo].lb.toUpperCase()}</div>${campos.map(c=>`<div class="f" style="margin-bottom:10px"><label>${labels[c]||c.toUpperCase()}</label><input id="campo-${c}" placeholder="${labels[c]||c}"/></div>`).join('')}</div>`;
+}
+function getCampos(){
+  const campos=TIPOS[_ativoTipo]?.campos||[];
+  const obj={};campos.forEach(c=>{const el=document.getElementById('campo-'+c);if(el)obj[c]=el.value.trim();});
+  return obj;
+}
+function hFotos(e,arr,gid){
+  [...e.target.files].forEach(f=>{const r=new FileReader();r.onload=ev=>{window[arr].push(ev.target.result);rFg(arr,gid);};r.readAsDataURL(f);});
+}
+function rFg(arr,gid){
+  const g=document.getElementById(gid);if(!g)return;
+  g.innerHTML=window[arr].map((f,i)=>`<img src="${f}" class="pt" onclick="window['${arr}'].splice(${i},1);rFg('${arr}','${gid}')"/>`).join('')+`<label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'${arr}','${gid}')" style="display:none"/></label>`;
+}
+function svAtivo(id){
+  const campos=getCampos();
+  const obj={tipo:_ativoTipo,nome:document.getElementById('at-nome').value.trim(),qtdTotal:Number(document.getElementById('at-qtd').value)||1,status:document.getElementById('at-st').value,descricao:document.getElementById('at-desc').value.trim(),fotos:[..._fa],campos,manutencoes:[],reservas:[]};
+  if(id) S.ativos=S.ativos.map(x=>x.id===Number(id)?{...x,...obj,manutencoes:x.manutencoes||[],reservas:x.reservas||[]}:x);
+  else S.ativos.push({id:nid(),...obj});
+  sv();closeModal();render();toast('Ativo salvo ✓');
+}
+function openAtivo(id){
+  const a=ga(id);const t=tp(a.tipo);
+  const cts=S.contratos.filter(c=>c.ativoId===Number(id));
+  const ctsAt=cts.filter(c=>c.status==='ativo');
+  const ctsRes=cts.filter(c=>c.status==='reservado');
+  const totalRec=totalRecAtivo(id);const totalDesp=totalDespAtivo(id);
+  const ocp=ocupPct(id);const st=statusAtivo(a);
+  const qtdDisp=Math.max(0,a.qtdTotal-ctsAt.length);
+  const nome=a.campos?.endereco||a.nome||'—';
+
+  openModal(`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+      <div style="width:44px;height:44px;border-radius:12px;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:20px">${t.ic}</div>
+      <div style="flex:1"><div class="tt">${t.lb}</div><div style="font-weight:800;font-size:15px;color:#eef0ff">${nome}</div></div>
+      ${bdg(st)}
+    </div>
+
+    ${a.qtdTotal>1?`<div style="display:flex;gap:7px;margin-bottom:12px">
+      <div style="flex:1;background:#0c1428;border:1px solid #151f3a;border-radius:11px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:#16a34a">${qtdDisp}</div><div style="font-size:9px;color:#6070a0">Disponíveis</div></div>
+      <div style="flex:1;background:#0c1428;border:1px solid #151f3a;border-radius:11px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:#fbbf24">${ctsAt.length}</div><div style="font-size:9px;color:#6070a0">Em uso</div></div>
+      <div style="flex:1;background:#0c1428;border:1px solid #151f3a;border-radius:11px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:#a78bfa">${a.qtdTotal}</div><div style="font-size:9px;color:#6070a0">Total</div></div>
+    </div>`:''}
+
+    <div class="sb">
+      <div class="sbt">DESEMPENHO DO ATIVO</div>
+      <div class="dr"><span class="dl">Total recebido</span><span class="dv" style="color:#16a34a">${R(totalRec)}</span></div>
+      <div class="dr"><span class="dl">Total despesas</span><span class="dv" style="color:#f87171">-${R(totalDesp)}</span></div>
+      <div class="dr"><span class="dl">Lucro líquido</span><span class="dv" style="color:${totalRec-totalDesp>=0?'#16a34a':'#f87171'};font-weight:900;font-size:14px">${R(totalRec-totalDesp)}</span></div>
+      <div class="dr"><span class="dl">Taxa de ocupação</span><span class="dv">${ocp}%</span></div>
+      <div class="dr"><span class="dl">Total de contratos</span><span class="dv">${cts.length}</span></div>
+      <div class="pb" style="margin-top:8px"><div class="pf" style="width:${ocp}%;background:${t.cor}"></div></div>
+    </div>
+
+    ${Object.keys(a.campos||{}).filter(k=>a.campos[k]).length>0?`
+    <div class="dc" style="margin-bottom:10px">
+      ${Object.entries(a.campos||{}).filter(([k,v])=>v).map(([k,v])=>{const ls={endereco:'Endereço',quartos:'Quartos',iptu:'IPTU',condominio:'Condomínio',marca:'Marca',modelo:'Modelo',patrimonio:'Patrimônio',placa:'Placa',renavam:'RENAVAM',km:'Quilometragem',serial:'Nº Série'};return`<div class="dr"><span class="dl">${ls[k]||k}</span><span class="dv">${v}</span></div>`;}).join('')}
+    </div>`:''}
+
+    ${a.descricao?`<div style="background:#151f3a;border-radius:9px;padding:9px;font-size:12px;color:#8090b8;margin-bottom:10px">${a.descricao}</div>`:''}
+
+    ${a.fotos?.length>0?`<div class="st">FOTOS</div><div class="pg" style="margin-bottom:10px">${a.fotos.map(f=>`<img src="${f}" class="pt"/>`).join('')}</div>`:''}
+
+    <!-- MANUTENÇÕES -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+      <div class="st" style="margin:0">🔧 MANUTENÇÕES (${(a.manutencoes||[]).length})</div>
+      <button class="bg2" style="font-size:11px;padding:5px 9px" onclick="openNovaManutencao(${id})">+ Registrar</button>
+    </div>
+    <div class="dc" style="margin-bottom:10px">
+      ${(a.manutencoes||[]).length===0?'<div style="text-align:center;color:#334060;font-size:11px;padding:8px">Nenhuma manutenção registrada</div>':
+      (a.manutencoes||[]).slice(-4).reverse().map(m=>`<div class="manut-item">
+        <div><span class="manut-tipo" style="background:${m.tipo==='Preventiva'?'#16a34a20':m.tipo==='Corretiva'?'#f8717120':'#4f8ef720'};color:${m.tipo==='Preventiva'?'#16a34a':m.tipo==='Corretiva'?'#f87171':'#4f8ef7'}">${m.tipo}</span><div style="font-size:11px;color:#6070a0;margin-top:2px">${m.desc} · ${FD(m.data)}${m.proxData?` · Próx: ${FD(m.proxData)}`:''}</div></div>
+        <div style="font-size:12px;font-weight:700;color:#f87171">-${R(m.custo)}</div>
+      </div>`).join('')}
+    </div>
+
+    <!-- RESERVAS -->
+    ${ctsRes.length>0?`
+    <div class="st">📅 RESERVAS (${ctsRes.length})</div>
+    ${ctsRes.map(r=>{const cl=gc(r.clienteId);return`<div class="res-item" onclick="openContrato(${r.id})">
+      <div style="display:flex;justify-content:space-between"><div style="font-size:13px;font-weight:700;color:#eef0ff">${cl?.nome||'?'}</div>${bdg('reservado')}</div>
+      <div style="font-size:11px;color:#6070a0;margin-top:3px">${FD(r.dataInicio)} → ${FD(r.dataFim)}</div>
+    </div>`}).join('')}`:''}
+
+    <!-- HISTÓRICO -->
+    <div class="st">HISTÓRICO DE CONTRATOS (${cts.length})</div>
+    ${cts.length===0?'<div style="text-align:center;color:#334060;font-size:12px;padding:10px">Nenhum contrato ainda</div>':
+    cts.map((c,i)=>{const cl=gc(c.clienteId);const last=i===cts.length-1;const atd=isOverdue(c);
+    return`<div class="tl"><div class="tld"><div class="tlc" style="background:${c.status==='ativo'?t.cor:c.status==='reservado'?'#a78bfa':'#2e3a58'}"></div>${!last?'<div class="tll"></div>':''}</div>
+    <div class="tlbox" onclick="openContrato(${c.id})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="tlname">${cl?.nome||'?'}</div>${bdg(atd?'atrasado':c.status)}</div>
+      <div class="tlper">${FD(c.dataInicio)} → ${c.dataFim?FD(c.dataFim):'Atual'}</div>
+      <div class="tlval" style="color:${t.cor}">${R(tpago(c))} recebidos · Lucro: ${R(tpago(c)-tdesp(c))}</div>
+    </div></div>`;}).join('')}
+
+    <div style="display:flex;gap:7px;margin-bottom:8px">
+      <button class="bp" style="flex:1" onclick="closeModal();setTimeout(()=>openNovoContrato(${id}),80)">+ Novo contrato</button>
+      <button class="bg2" style="flex:1" onclick="editAtivo(${id})">✏️ Editar</button>
+    </div>
+    <button class="bd" onclick="delAtivo(${id})">🗑 Excluir ativo</button>`);
+}
+function editAtivo(id){
+  const a=ga(id);_fa=[...(a.fotos||[])];_ativoTipo=a.tipo;
+  openModal(`<div class="mt">Editar ativo</div>
+    <div style="font-size:10px;font-weight:700;color:#6070a0;letter-spacing:.4px;margin-bottom:7px">TIPO</div>
+    <div class="tipo-grid" id="tipo-grid">${Object.entries(TIPOS).map(([k,t])=>`<div class="tipo-card ${k===a.tipo?'active':''}" onclick="selTipo('${k}')"><span class="tci">${t.ic}</span><span class="tcl">${t.lb}</span></div>`).join('')}</div>
+    <div id="campos-ativo"><div class="campos-especificos"><div class="campos-titulo">INFORMAÇÕES</div>${(TIPOS[a.tipo]?.campos||[]).map(c=>{const ls={endereco:'ENDEREÇO',quartos:'QUARTOS',iptu:'IPTU (anual R$)',condominio:'CONDOMÍNIO (mensal R$)',marca:'MARCA',modelo:'MODELO',patrimonio:'Nº PATRIMÔNIO',placa:'PLACA',renavam:'RENAVAM',km:'QUILOMETRAGEM',serial:'Nº SÉRIE'};return`<div class="f" style="margin-bottom:10px"><label>${ls[c]||c.toUpperCase()}</label><input id="campo-${c}" value="${a.campos?.[c]||''}"/></div>`;}).join('')}</div></div>
+    <div class="f"><label>NOME / IDENTIFICAÇÃO</label><input id="at-nome" value="${a.nome||''}"/></div>
+    <div class="fr">
+      <div class="f"><label>QUANTIDADE TOTAL</label><input type="number" id="at-qtd" value="${a.qtdTotal}"/></div>
+      <div class="f"><label>STATUS</label><select id="at-st"><option value="disponivel" ${a.status==='disponivel'?'selected':''}>Disponível</option><option value="manutencao" ${a.status==='manutencao'?'selected':''}>Manutenção</option></select></div>
+    </div>
+    <div class="f"><label>DESCRIÇÃO</label><textarea id="at-desc">${a.descricao||''}</textarea></div>
+    <div class="f"><label>FOTOS</label><div class="pg" id="fg-at">${_fa.map((f,i)=>`<img src="${f}" class="pt" onclick="_fa.splice(${i},1);rFg('_fa','fg-at')"/>`).join('')}<label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fa','fg-at')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svAtivo(${id})">Salvar alterações</button>`);
+}
+function delAtivo(id){
+  if(!confirm('Excluir este ativo e todos os contratos?'))return;
+  S.ativos=S.ativos.filter(x=>x.id!==Number(id));
+  S.contratos=S.contratos.filter(c=>c.ativoId!==Number(id));
+  sv();closeModal();render();toast('Ativo excluído');
+}
+
+// ── MANUTENÇÃO ───────────────────────────────────────
+function openNovaManutencao(ativoId){
+  openModal(`<div class="mt">Registrar manutenção</div>
+    <div class="f"><label>TIPO *</label><select id="m-tipo"><option>Preventiva</option><option>Corretiva</option><option>Inspeção</option></select></div>
+    <div class="f"><label>DESCRIÇÃO *</label><input id="m-desc" placeholder="O que foi feito..."/></div>
+    <div class="fr">
+      <div class="f"><label>DATA *</label><input type="date" id="m-data" value="${TD()}"/></div>
+      <div class="f"><label>CUSTO (R$)</label><input type="number" id="m-custo" placeholder="0.00"/></div>
+    </div>
+    <div class="f"><label>PRÓXIMA MANUTENÇÃO</label><input type="date" id="m-prox"/></div>
+    <div class="f"><label>OBSERVAÇÕES</label><textarea id="m-obs" placeholder="Peças trocadas, responsável..."></textarea></div>
+    <button class="bp" onclick="svManutencao(${ativoId})">Registrar</button>`);
+}
+function svManutencao(ativoId){
+  const desc=document.getElementById('m-desc').value.trim();
+  if(!desc){toast('Informe a descrição');return;}
+  const m={id:nid(),tipo:document.getElementById('m-tipo').value,desc,data:document.getElementById('m-data').value,custo:Number(document.getElementById('m-custo').value)||0,proxData:document.getElementById('m-prox').value||null,obs:document.getElementById('m-obs').value.trim()};
+  S.ativos=S.ativos.map(a=>a.id===Number(ativoId)?{...a,manutencoes:[...(a.manutencoes||[]),m]}:a);
+  sv();closeModal();setTimeout(()=>openAtivo(ativoId),80);toast('Manutenção registrada ✓');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MODAL: CONTRATO
+// ══════════════════════════════════════════════════════════════
+let _ctCalc=0,_ctStatus='ativo';
+function openNovoContrato(ativoId,clienteId){
+  _ctCalc=0;_ctStatus='ativo';_fa=[];_fb=[];
+  const ativoOpts=S.ativos.map(a=>`<option value="${a.id}" ${Number(ativoId)===a.id?'selected':''}>${tp(a.tipo).ic} ${a.campos?.endereco||a.nome||'Ativo #'+a.id}</option>`).join('');
+  const cliOpts=S.clientes.map(c=>`<option value="${c.id}" ${Number(clienteId)===c.id?'selected':''}>${c.nome}</option>`).join('');
+
+  openModal(`<div class="mt">Novo contrato</div>
+    <div class="vt" style="margin-bottom:10px">
+      <button class="vtb active" id="st-ativo" onclick="selCtStatus('ativo')">✅ Contrato ativo</button>
+      <button class="vtb" id="st-reservado" onclick="selCtStatus('reservado')">📅 Reserva futura</button>
+    </div>
+    <div class="f"><label>ATIVO *</label><select id="ct-at" onchange="calcCT()">${S.ativos.length===0?'<option value="">Nenhum ativo cadastrado</option>':'<option value="">Selecione...</option>'+ativoOpts}</select></div>
+    <div class="f"><label>CLIENTE *</label><select id="ct-cl"><option value="">Selecione...</option>${cliOpts}</select></div>
+    <div class="fr">
+      <div class="f"><label>DATA INÍCIO *</label><input type="date" id="ct-ini" value="${TD()}" oninput="calcCT()"/></div>
+      <div class="f"><label>DATA FIM</label><input type="date" id="ct-fim" oninput="calcCT()"/></div>
+    </div>
+    <div class="f"><label>TIPO DE COBRANÇA *</label>
+      <select id="ct-tcob" onchange="calcCT()">
+        <option value="mensal_fixo">Aluguel mensal (dia fixo)</option>
+        <option value="fixo">Valor fixo total</option>
+        <option value="diario">Por dia</option>
+        <option value="semanal">Por semana</option>
+        <option value="mensal">Por mês (período)</option>
+      </select>
+    </div>
+    <div id="ct-periodo-wrap" class="f"><label>DIA DE VENCIMENTO *</label><input type="number" id="ct-periodo" placeholder="Ex: 5" min="1" max="31"/></div>
+    <div class="fr">
+      <div class="f"><label>VALOR *</label><input type="number" id="ct-valor" placeholder="0.00" oninput="calcCT()"/></div>
+      <div class="f"><label>QUANTIDADE</label><input type="number" id="ct-qtd" value="1" min="1" oninput="calcCT()"/></div>
+    </div>
+    <div id="ct-preview" style="display:none" class="sb"><div class="sbt">RESUMO</div><div id="ct-prev-c"></div></div>
+    <div class="f"><label>OBSERVAÇÕES</label><textarea id="ct-obs" placeholder="Garantias, condições, regras..."></textarea></div>
+    <div class="f"><label>FOTOS NA ENTREGA</label><div class="pg" id="fg-ct"><label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fa','fg-ct')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svContrato()">Registrar contrato</button>`);
+
+  document.getElementById('ct-tcob').addEventListener('change',function(){
+    document.getElementById('ct-periodo-wrap').style.display=this.value==='mensal_fixo'?'block':'none';
+    calcCT();
+  });
+}
+function selCtStatus(s){
+  _ctStatus=s;
+  document.getElementById('st-ativo').className='vtb'+(s==='ativo'?' active':'');
+  document.getElementById('st-reservado').className='vtb'+(s==='reservado'?' active':'');
+}
+function calcCT(){
+  const tcob=document.getElementById('ct-tcob')?.value||'fixo';
+  const val=Number(document.getElementById('ct-valor')?.value)||0;
+  const qtd=Number(document.getElementById('ct-qtd')?.value)||1;
+  const ini=document.getElementById('ct-ini')?.value;
+  const fim=document.getElementById('ct-fim')?.value;
+  const prev=document.getElementById('ct-preview');
+  const prevc=document.getElementById('ct-prev-c');
+  if(!val||!prev)return;
+  let total=0,desc='';
+  if(tcob==='mensal_fixo'){total=val;desc=`${R(val)}/mês`;}
+  else if(tcob==='fixo'){total=val*qtd;desc=`${qtd}× ${R(val)}`;}
+  else if(ini&&fim){
+    const dias=Math.max(1,diffD(ini,fim));
+    if(tcob==='diario'){total=val*dias*qtd;desc=`${dias} dia(s) × ${R(val)} × ${qtd}`;}
+    else if(tcob==='semanal'){const s=Math.ceil(dias/7);total=val*s*qtd;desc=`${s} sem. × ${R(val)} × ${qtd}`;}
+    else if(tcob==='mensal'){const ms=Math.ceil(dias/30);total=val*ms*qtd;desc=`${ms} mês(es) × ${R(val)} × ${qtd}`;}
+  } else{total=val*qtd;desc=`${qtd}× ${R(val)}`;}
+  _ctCalc=total;
+  prev.style.display='block';
+  prevc.innerHTML=`<div class="dr"><span class="dl">${desc}</span><span class="dv" style="color:#16a34a;font-weight:800">${R(total)}</span></div>`;
+}
+function svContrato(){
+  const ativoId=Number(document.getElementById('ct-at').value);
+  const cliId=Number(document.getElementById('ct-cl').value);
+  if(!ativoId||!cliId){toast('Selecione ativo e cliente');return;}
+  const val=Number(document.getElementById('ct-valor').value);
+  if(!val){toast('Informe o valor');return;}
+  const tcob=document.getElementById('ct-tcob').value;
+  const periodo=tcob==='mensal_fixo'?Number(document.getElementById('ct-periodo').value):null;
+  if(tcob==='mensal_fixo'&&!periodo){toast('Informe o dia de vencimento');return;}
+  const c={id:nid(),ativoId,clienteId:cliId,dataInicio:document.getElementById('ct-ini').value,dataFim:document.getElementById('ct-fim').value||null,valor:_ctCalc||val,tipoCob:tcob,periodo,qtd:Number(document.getElementById('ct-qtd').value)||1,obs:document.getElementById('ct-obs').value.trim(),fotosEntrada:[..._fa],fotosSaida:[],status:_ctStatus,pagamentos:[],despesas:[]};
+  S.contratos.push(c);
+  // atualiza status do ativo
+  atualizaStatusAtivo(ativoId);
+  sv();closeModal();render();toast('Contrato registrado ✓');
+}
+function atualizaStatusAtivo(ativoId){
+  const a=ga(ativoId);if(!a)return;
+  if(a.status==='manutencao')return;
+  const em=ctAtivosDeAtivo(ativoId).length;
+  const res=ctReservasDeAtivo(ativoId).length;
+  let novoSt=em>=a.qtdTotal?'ocupado':res>0?'disponivel':'disponivel';
+  if(em>0) novoSt='ocupado';
+  S.ativos=S.ativos.map(x=>x.id===Number(ativoId)?{...x,status:novoSt}:x);
+}
+
+function openContrato(id){
+  const c=gct(id);const cl=gc(c.clienteId);const at=ga(c.ativoId);const t=tp(at?.tipo);
+  const pago=tpago(c);const desp=tdesp(c);const rem=Math.max(0,Number(c.valor)-pago);
+  const pct=c.valor>0?Math.min(100,pago/Number(c.valor)*100):0;
+  const atd=isOverdue(c);const nome=at?.campos?.endereco||at?.nome||'?';
+
+  openModal(`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+      <div style="width:42px;height:42px;border-radius:11px;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:18px">${t.ic}</div>
+      <div style="flex:1"><div style="font-weight:800;font-size:14px;color:#eef0ff">${nome}</div><div style="font-size:11px;color:#6070a0">${cl?.nome||'?'} · ${t.lb}</div></div>
+      ${bdg(atd?'atrasado':c.status)}
+    </div>
+
+    ${atd?`<div class="alerta">⚠️ Pagamento em atraso — vence ${c.tipoCob==='mensal_fixo'?'todo dia '+c.periodo:FD(c.dataFim)}</div>`:''}
+    ${c.status==='reservado'?`<div class="alerta alerta-info">📅 Reserva confirmada — início em ${FD(c.dataInicio)}</div>`:''}
+
+    <div class="sb">
+      <div class="sbt">FINANCEIRO</div>
+      ${c.tipoCob==='mensal_fixo'?`<div class="dr"><span class="dl">Valor mensal</span><span class="dv" style="color:#16a34a">${R(c.valor)}</span></div>`:`<div class="dr"><span class="dl">Valor total</span><span class="dv" style="color:#16a34a">${R(c.valor)}</span></div>`}
+      <div class="dr"><span class="dl">Total pago</span><span class="dv" style="color:#16a34a">${R(pago)}</span></div>
+      <div class="dr"><span class="dl">Despesas</span><span class="dv" style="color:#f87171">-${R(desp)}</span></div>
+      <div class="dr"><span class="dl">Lucro líquido</span><span class="dv" style="color:${pago-desp>=0?'#16a34a':'#f87171'};font-weight:900">${R(pago-desp)}</span></div>
+      ${c.tipoCob!=='mensal_fixo'?`<div class="pb" style="margin-top:8px"><div class="pf" style="width:${pct}%;background:${atd?'#f87171':'#16a34a'}"></div></div><div class="pl"><span>${pct.toFixed(0)}% pago</span><span>Restante: ${R(rem)}</span></div>`:''}
+    </div>
+
+    <div class="dc" style="margin-bottom:10px">
+      <div class="dr"><span class="dl">Início</span><span class="dv">${FD(c.dataInicio)}</span></div>
+      ${c.tipoCob==='mensal_fixo'?`<div class="dr"><span class="dl">Vencimento</span><span class="dv">Todo dia ${c.periodo}</span></div>`:c.dataFim?`<div class="dr"><span class="dl">Fim previsto</span><span class="dv">${FD(c.dataFim)}</span></div>`:''}
+      <div class="dr"><span class="dl">Cobrança</span><span class="dv">${{mensal_fixo:'Mensal (dia fixo)',fixo:'Valor fixo',diario:'Por dia',semanal:'Por semana',mensal:'Por mês'}[c.tipoCob]||c.tipoCob}</span></div>
+      ${c.obs?`<div class="dr"><span class="dl">Obs.</span><span class="dv">${c.obs}</span></div>`:''}
+    </div>
+
+    ${c.fotosEntrada?.length>0?`<div class="st">FOTOS DE ENTREGA</div><div class="pg" style="margin-bottom:10px">${c.fotosEntrada.map(f=>`<img src="${f}" class="pt"/>`).join('')}</div>`:''}
+    ${c.fotosSaida?.length>0?`<div class="st">FOTOS DE SAÍDA</div><div class="pg" style="margin-bottom:10px">${c.fotosSaida.map(f=>`<img src="${f}" class="pt"/>`).join('')}</div>`:''}
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+      <div class="st" style="margin:0">PAGAMENTOS (${(c.pagamentos||[]).length})</div>
+    </div>
+    <div class="dc" style="margin-bottom:10px">
+      ${(c.pagamentos||[]).length===0?'<div style="text-align:center;color:#334060;font-size:11px;padding:8px">Nenhum pagamento</div>':
+      (c.pagamentos||[]).slice(-6).reverse().map(p=>`<div class="dr"><div><div style="font-size:12px;font-weight:600;color:#eef0ff">${p.obs||'Pagamento'}</div><div style="font-size:10px;color:#6070a0">${FD(p.data)}</div></div><div style="color:#16a34a;font-weight:800;font-size:12px">${R(p.valor)}</div></div>`).join('')}
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+      <div class="st" style="margin:0">DESPESAS (${(c.despesas||[]).length})</div>
+    </div>
+    <div class="dc" style="margin-bottom:12px">
+      ${(c.despesas||[]).length===0?'<div style="text-align:center;color:#334060;font-size:11px;padding:8px">Nenhuma despesa</div>':
+      (c.despesas||[]).slice(-4).reverse().map(d=>`<div class="dr"><div><div style="font-size:12px;font-weight:600;color:#eef0ff">${d.desc}</div><div style="font-size:10px;color:#6070a0">${FD(d.data)}</div></div><div style="color:#f87171;font-weight:800;font-size:12px">-${R(d.valor)}</div></div>`).join('')}
+    </div>
+
+    ${c.status!=='encerrado'?`
+    <div style="display:flex;gap:7px;margin-bottom:7px">
+      <button class="bp" style="flex:1" onclick="openPagCt(${id})">💰 Pagamento</button>
+      <button class="by2" style="flex:1;margin:0;padding:13px;font-size:13px" onclick="openDespCt(${id})">💸 Despesa</button>
+    </div>
+    <button class="bb2" onclick="openFotosSaida(${id})">📷 Fotos de saída</button>
+    <button class="bg2" style="width:100%;margin-top:7px" onclick="encerrar(${id})">🔒 Encerrar contrato</button>`:''}
+    <button class="bd" onclick="delContrato(${id})">🗑 Excluir contrato</button>`);
+}
+function openPagCt(id){
+  const c=gct(id);const sug=c.tipoCob==='mensal_fixo'?c.valor:Math.max(0,Number(c.valor)-tpago(c));
+  openModal(`<div class="mt">Registrar pagamento</div>
+    <div class="f"><label>VALOR *</label><input type="number" id="pv" value="${Number(sug).toFixed(2)}"/></div>
+    <div class="f"><label>DATA</label><input type="date" id="pd" value="${TD()}"/></div>
+    <div class="f"><label>DESCRIÇÃO</label><input id="po" placeholder="Aluguel, parcela, entrada..."/></div>
+    <button class="bp" onclick="svPag(${id})">Confirmar pagamento</button>`);
+}
+function svPag(id){
+  const v=Number(document.getElementById('pv').value);
+  if(!v){toast('Informe o valor');return;}
+  S.contratos=S.contratos.map(c=>c.id!==Number(id)?c:{...c,pagamentos:[...(c.pagamentos||[]),{id:nid(),valor:v,data:document.getElementById('pd').value,obs:document.getElementById('po')?.value||''}]});
+  sv();closeModal();render();toast('Pagamento registrado ✓');
+}
+function openDespCt(id){
+  openModal(`<div class="mt">Registrar despesa</div>
+    <div class="f"><label>DESCRIÇÃO *</label><input id="dd" placeholder="IPTU, reforma, manutenção..."/></div>
+    <div class="fr">
+      <div class="f"><label>VALOR *</label><input type="number" id="dv" placeholder="0.00"/></div>
+      <div class="f"><label>DATA</label><input type="date" id="ddt" value="${TD()}"/></div>
+    </div>
+    <button class="by2" onclick="svDesp(${id})">Registrar despesa</button>`);
+}
+function svDesp(id){
+  const desc=document.getElementById('dd').value.trim();const v=Number(document.getElementById('dv').value);
+  if(!desc||!v){toast('Preencha todos os campos');return;}
+  S.contratos=S.contratos.map(c=>c.id!==Number(id)?c:{...c,despesas:[...(c.despesas||[]),{id:nid(),desc,valor:v,data:document.getElementById('ddt').value}]});
+  sv();closeModal();render();toast('Despesa registrada ✓');
+}
+function openFotosSaida(id){
+  _fb=[];
+  openModal(`<div class="mt">Fotos de saída</div>
+    <div class="alerta alerta-info">📷 Registre o estado do ativo na devolução</div>
+    <div class="f"><label>ADICIONAR FOTOS</label><div class="pg" id="fg-fs"><label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fb','fg-fs')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svFS(${id})">Salvar fotos</button>`);
+}
+function svFS(id){
+  S.contratos=S.contratos.map(c=>c.id===Number(id)?{...c,fotosSaida:[...(c.fotosSaida||[]),..._fb]}:c);
+  sv();closeModal();setTimeout(()=>openContrato(id),80);toast('Fotos salvas ✓');
+}
+function encerrar(id){
+  if(!confirm('Encerrar este contrato?'))return;
+  const c=gct(id);
+  S.contratos=S.contratos.map(x=>x.id===Number(id)?{...x,status:'encerrado',dataFim:x.dataFim||TD()}:x);
+  atualizaStatusAtivo(c.ativoId);
+  sv();closeModal();render();toast('Contrato encerrado ✓');
+}
+function delContrato(id){
+  if(!confirm('Excluir este contrato?'))return;
+  const c=gct(id);
+  S.contratos=S.contratos.filter(x=>x.id!==Number(id));
+  if(c) atualizaStatusAtivo(c.ativoId);
+  sv();closeModal();render();toast('Contrato excluído');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CONFIGURAÇÕES / BACKUP
+// ══════════════════════════════════════════════════════════════
+function rConfig(){
+  const total={clientes:S.clientes.length,ativos:S.ativos.length,contratos:S.contratos.length};
+  const tamanho=(JSON.stringify(S).length/1024).toFixed(1);
+  const ultimoBackup=localStorage.getItem('lf3_backup_data')||null;
+
+  return`
+  <div class="sh"><h2>Configurações</h2></div>
+
+  <!-- RESUMO DOS DADOS -->
+  <div class="st">📊 SEUS DADOS</div>
+  <div class="card card-p" style="margin-bottom:13px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div style="text-align:center;background:#0a2015;border-radius:10px;padding:10px">
+        <div style="font-size:22px;font-weight:900;color:#16a34a">${total.clientes}</div>
+        <div style="font-size:10px;color:#6070a0">Clientes</div>
+      </div>
+      <div style="text-align:center;background:#1a0e02;border-radius:10px;padding:10px">
+        <div style="font-size:22px;font-weight:900;color:#fbbf24">${total.ativos}</div>
+        <div style="font-size:10px;color:#6070a0">Ativos</div>
+      </div>
+      <div style="text-align:center;background:#070e1e;border-radius:10px;padding:10px">
+        <div style="font-size:22px;font-weight:900;color:#4f8ef7">${total.contratos}</div>
+        <div style="font-size:10px;color:#6070a0">Contratos</div>
+      </div>
+    </div>
+    <div class="dr"><span class="dl">Tamanho dos dados</span><span class="dv">${tamanho} KB</span></div>
+    <div class="dr"><span class="dl">Último backup</span><span class="dv" style="color:${ultimoBackup?'#16a34a':'#f87171'}">${ultimoBackup?FD(ultimoBackup):'Nunca realizado'}</span></div>
+  </div>
+
+  <!-- BACKUP -->
+  <div class="st">💾 BACKUP DOS DADOS</div>
+  <div class="alerta alerta-info" style="margin-bottom:10px">💡 Faça backup regularmente. Se trocar de celular ou limpar o navegador, seus dados podem ser perdidos.</div>
+  <div class="card card-p" style="margin-bottom:13px">
+    <div style="font-size:13px;color:#dde2ff;font-weight:600;margin-bottom:6px">Exportar backup</div>
+    <div style="font-size:12px;color:#6070a0;margin-bottom:12px">Salva todos os seus dados em um arquivo no celular. Guarde em local seguro.</div>
+    <button class="bp" onclick="exportarBackup()">📥 Baixar backup agora</button>
+  </div>
+
+  <!-- RESTAURAR -->
+  <div class="card card-p" style="margin-bottom:13px">
+    <div style="font-size:13px;color:#dde2ff;font-weight:600;margin-bottom:6px">Importar backup</div>
+    <div style="font-size:12px;color:#6070a0;margin-bottom:12px">Restaura seus dados a partir de um arquivo de backup salvo anteriormente.</div>
+    <label style="display:block">
+      <div class="bb2" style="text-align:center;cursor:pointer;padding:13px;border-radius:11px;font-size:14px;font-weight:700">📤 Selecionar arquivo de backup</div>
+      <input type="file" accept=".json" onchange="importarBackup(event)" style="display:none"/>
+    </label>
+  </div>
+
+  <!-- MIGRAÇÃO -->
+  <div class="st">🔄 MIGRAÇÃO DE VERSÃO ANTERIOR</div>
+  <div class="card card-p" style="margin-bottom:13px">
+    <div style="font-size:13px;color:#dde2ff;font-weight:600;margin-bottom:6px">Importar dados da versão antiga</div>
+    <div style="font-size:12px;color:#6070a0;margin-bottom:12px">Se você usava a versão anterior do LocaFácil e perdeu os dados, tente recuperar aqui.</div>
+    <button class="bg2" style="width:100%" onclick="tentarMigrar()">🔃 Tentar recuperar dados antigos</button>
+  </div>
+
+  <!-- PERIGO -->
+  <div class="st">⚠️ ZONA DE PERIGO</div>
+  <div class="card card-p" style="margin-bottom:13px;border-color:#f8717130">
+    <div style="font-size:13px;color:#f87171;font-weight:600;margin-bottom:6px">Apagar todos os dados</div>
+    <div style="font-size:12px;color:#6070a0;margin-bottom:12px">Remove permanentemente todos os clientes, ativos e contratos. Esta ação não pode ser desfeita.</div>
+    <button class="bd" style="margin:0" onclick="apagarTudo()">🗑 Apagar tudo</button>
+  </div>
+
+  <!-- SOBRE -->
+  <div class="st">ℹ️ SOBRE O APP</div>
+  <div class="card card-p" style="margin-bottom:20px">
+    <div class="dr"><span class="dl">Versão</span><span class="dv">3.0</span></div>
+    <div class="dr"><span class="dl">Tipos de ativos</span><span class="dv">8 categorias</span></div>
+    <div class="dr"><span class="dl">Armazenamento</span><span class="dv">Local no celular</span></div>
+    <div class="dr"><span class="dl">Funciona offline</span><span class="dv" style="color:#16a34a">✓ Sim</span></div>
+  </div>
+  <div style="height:16px"></div>`;
+}
+
+function exportarBackup(){
+  const dados={versao:'3.0',data:TD(),app:'LocaFacil',...S};
+  const json=JSON.stringify(dados,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`locafacil-backup-${TD()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  localStorage.setItem('lf3_backup_data',TD());
+  render();
+  toast('Backup salvo com sucesso ✓');
+}
+
+function importarBackup(e){
+  const file=e.target.files[0];
+  if(!file){return;}
+  if(!file.name.endsWith('.json')){toast('Selecione um arquivo .json válido');return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const dados=JSON.parse(ev.target.result);
+      if(!dados.clientes||!dados.ativos||!dados.contratos){
+        toast('Arquivo inválido — não é um backup do LocaFácil');return;
+      }
+      if(!confirm(`Importar backup de ${FD(dados.data)}?\n\nIsso vai substituir todos os dados atuais.\n\nClientes: ${dados.clientes.length}\nAtivos: ${dados.ativos.length}\nContratos: ${dados.contratos.length}`)){return;}
+      S={clientes:dados.clientes,ativos:dados.ativos,contratos:dados.contratos,nextId:dados.nextId||nid()};
+      sv();render();toast('Backup importado com sucesso ✓');
+    }catch(err){
+      toast('Erro ao ler o arquivo. Tente novamente.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function tentarMigrar(){
+  // Tenta recuperar dados das versões anteriores (lf2, lf, locafacil)
+  const chaves=['lf2','lf','locafacil','ff_state'];
+  let encontrou=false;
+  for(const ch of chaves){
+    const raw=localStorage.getItem(ch);
+    if(raw){
+      try{
+        const dados=JSON.parse(raw);
+        const temDados=(dados.clientes?.length||0)+(dados.imoveis?.length||0)+(dados.itens?.length||0)+(dados.ativos?.length||0)+(dados.loans?.length||0);
+        if(temDados>0){
+          encontrou=true;
+          if(!confirm(`Encontrei dados da versão anterior!\n\nClientes: ${dados.clientes?.length||0}\nRegistros: ${(dados.imoveis||dados.ativos||dados.itens||dados.loans||[]).length}\n\nDeseja importar?`)){return;}
+          // Migra clientes
+          if(dados.clientes?.length){
+            dados.clientes.forEach(c=>{
+              if(!S.clientes.find(x=>x.nome===c.nome)){
+                S.clientes.push({...c,id:nid()});
+              }
+            });
+          }
+          sv();render();toast('Dados recuperados com sucesso ✓');
+          return;
+        }
+      }catch(e){}
+    }
+  }
+  if(!encontrou) toast('Nenhum dado anterior encontrado');
+}
+
+function apagarTudo(){
+  if(!confirm('Tem certeza? Esta ação apaga TODOS os dados permanentemente e não pode ser desfeita!'))return;
+  if(!confirm('Segunda confirmação: apagar tudo mesmo?'))return;
+  S={clientes:[],ativos:[],contratos:[],nextId:1};
+  sv();render();toast('Todos os dados foram apagados');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MODAL HELPERS
+// ══════════════════════════════════════════════════════════════
+function openModal(h){document.getElementById('mc').innerHTML=h;document.getElementById('ov').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// ══════════════════════════════════════════════════════════════
+//  PWA
+// ══════════════════════════════════════════════════════════════
+if('serviceWorker'in navigator){
+  const sw=`const C='lf3-v1';self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(['/']))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+tick();setInterval(tick,30000);render();
+</script>
+</body>
+</html>
